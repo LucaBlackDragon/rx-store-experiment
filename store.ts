@@ -1,14 +1,10 @@
 import { Subject } from "rxjs";
-import { scan } from "rxjs/operators";
-
-interface Action {
-  type: string;
-  payload?: any;
-}
-
-interface CounterAction extends Action {
-  payload: number;
-}
+import { scan, withLatestFrom } from "rxjs/operators";
+import {
+  Action,
+  GENERIC_BUTTON_CLICK,
+  RESET_BUTTON_CLICK
+} from "./actions";
 
 interface State {
   counter: number;
@@ -28,13 +24,13 @@ const store$ = actions$.pipe(
       default:
         return acc;
 
-      case "INCREMENT":
+      case GENERIC_BUTTON_CLICK:
         return {
           ...acc,
-          counter: acc.counter + (action as CounterAction).payload
+          counter: acc.counter + 1
         };
 
-      case "RESET":
+      case RESET_BUTTON_CLICK:
         return {
           ...initialState
         };
@@ -42,4 +38,11 @@ const store$ = actions$.pipe(
   }, initialState)
 );
 
-export { State, Action, CounterAction, dispatch, store$ };
+// middleware/effects/sagas/...
+actions$
+  .pipe(withLatestFrom(store$))
+  .subscribe(([action, state]: [Action, State]) => {
+    console.log(`action: ${action.type}, state: ${JSON.stringify(state)}`);
+  });
+
+export { State, dispatch, store$ };
