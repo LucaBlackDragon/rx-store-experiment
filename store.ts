@@ -20,6 +20,8 @@ const initialState: State = {
 
 const actions$ = new Subject();
 
+const dispatch = (action: Action) => actions$.next(action);
+
 const store$ = actions$.pipe(
   scan((acc: State, action: Action) => {
     switch (action.type) {
@@ -39,7 +41,5 @@ const store$ = actions$.pipe(
     }
   }, initialState)
 );
-
-const dispatch = (action: Action) => actions$.next(action);
 
 export { State, Action, CounterAction, dispatch, store$ };
