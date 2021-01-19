@@ -8,6 +8,8 @@ const resetButton = document.querySelector("#reset-btn");
 const clicksCounter = document.querySelector("#clicks-counter");
 
 store$.subscribe(state => {
+  console.log(`Store subscription:
+state: ${JSON.stringify(state)}`);
   clicksCounter.innerHTML = state.counter.toString();
 });
 
@@ -20,4 +22,4 @@ fromEvent(genericButton, "click")
 fromEvent(resetButton, "click").subscribe(() => reset());
 
 // needed to initialize/"trigger" the store reducer
-reset();
+// reset();
