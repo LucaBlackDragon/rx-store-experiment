@@ -1,5 +1,5 @@
 import { BehaviorSubject, Subject } from "rxjs";
-import { scan, tap, withLatestFrom } from "rxjs/operators";
+import { scan, share, startWith, tap, withLatestFrom } from "rxjs/operators";
 import { Action, GENERIC_BUTTON_CLICK, RESET_BUTTON_CLICK } from "./actions";
 import { print } from "./utils";
 
@@ -19,7 +19,7 @@ const dispatch = (action: Action) => {
 };
 
 // Store
-const store$: Subject<State> = new BehaviorSubject(initialState);
+const store$: Subject<State> = new BehaviorSubject(undefined);
 
 // Root reducer
 const rootReducer = (state: State, action: Action) => {
@@ -40,8 +40,10 @@ const rootReducer = (state: State, action: Action) => {
 };
 actions$
   .pipe(
-    scan(rootReducer, initialState),
-    tap(state => console.log(`[Reducer] new state: ${print(state)}`))
+    startWith(initialState),
+    scan(rootReducer),
+    tap(state => console.log(`[Reducer] new state: ${print(state)}`)),
+    share() // protezione contro subscribe multipli
   )
   .subscribe(state => store$.next(state));
 
