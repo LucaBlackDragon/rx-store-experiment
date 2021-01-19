@@ -20,6 +20,3 @@ fromEvent(genericButton, "click")
   .subscribe(() => dispatch(genericButtonClick()));
 
 fromEvent(resetButton, "click").subscribe(() => reset());
-
-// needed to initialize/"trigger" the store reducer
-// reset();
