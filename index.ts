@@ -1,3 +1,4 @@
+import "./style.css";
 import { fromEvent } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 import { dispatch, store$ } from "./store";
