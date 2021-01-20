@@ -19,6 +19,8 @@ const dispatch = (action: Action) => {
 };
 
 // Store
+// Utilizzo un BehaviorSubject in modo che chi si sottoscrive
+// riceva subito il valore corrente dello store
 const store$: Subject<State> = new BehaviorSubject(undefined);
 
 // Root reducer
@@ -45,6 +47,7 @@ actions$
     tap(state => console.log(`[Reducer] new state: ${print(state)}`)),
     share() // protezione contro subscribe multipli
   )
+  // invio il nuovo stato allo store
   .subscribe(state => store$.next(state));
 
 // Log middleware
