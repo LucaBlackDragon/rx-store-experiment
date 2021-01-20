@@ -11,19 +11,25 @@ const initialState: State = {
   counter: 0
 };
 
+// Stream delle azioni
 const actions$: Subject<Action> = new Subject();
 
+// Dispatcher
+// utilizzato per aggiungere una nuova azione allo stream
 const dispatch = (action: Action) => {
   console.log(`[Dispatcher] dispatch ${action.type}`);
   actions$.next(action);
 };
 
-// Store
-// Utilizzo un BehaviorSubject in modo che chi si sottoscrive
-// riceva subito il valore corrente dello store
+// Store "pubblico"
+// Utilizzo un BehaviorSubject per "pubblicare" lo stato, in
+// modo che chi si sottoscrive riceva subito il valore corrente
+// dello store
 const store$: Subject<State> = new BehaviorSubject(undefined);
 
 // Root reducer
+// produce il nuovo stato a partire dallo stato precedente e
+// dall'azione ricevuta (comportamento classico)
 const rootReducer = (state: State, action: Action) => {
   console.log(`[Reducer] state: ${print(state)}, action: ${print(action)}`);
   switch (action.type) {
@@ -40,22 +46,26 @@ const rootReducer = (state: State, action: Action) => {
       return initialState;
   }
 };
+
+// Stato dell'applicazione
+// ottenuto applicando lo stream delle azioni allo stato iniziale
+// e "pubblicato" nel BehaviorSubject precedentemente definito
 actions$
   .pipe(
     startWith(initialState),
     scan(rootReducer),
     tap(state => console.log(`[Reducer] new state: ${print(state)}`)),
-    share() // protezione contro subscribe multipli
+    share() // protezione contro eventuali subscribe multipli
   )
-  // invio il nuovo stato allo store
+  // invio il nuovo stato allo store "pubblico"
   .subscribe(state => store$.next(state));
 
 // Log middleware
-// (the same pattern could be used for effects/sagas/...)
+// questo pattern può essere esteso per implementare effects/sagas/...
 actions$
   .pipe(withLatestFrom(store$))
   .subscribe(([action, state]: [Action, State]) => {
     console.log(`[Log MW] action: ${action.type}, state: ${print(state)}`);
   });
 
-export { State, dispatch, store$ };
+export { dispatch, store$ };
