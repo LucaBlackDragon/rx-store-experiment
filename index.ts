@@ -20,4 +20,6 @@ fromEvent(genericButton, "click")
   .pipe(debounceTime(60))
   .subscribe(() => dispatch(genericButtonClick()));
 
-fromEvent(resetButton, "click").subscribe(() => reset());
+fromEvent(resetButton, "click")
+  .pipe(debounceTime(60))
+  .subscribe(() => reset());
