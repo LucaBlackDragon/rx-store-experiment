@@ -14,12 +14,10 @@ store$.subscribe(state => {
   clicksCounter.innerHTML = state.counter.toString();
 });
 
-const reset = () => dispatch(resetClick());
-
 fromEvent(genericButton, "click")
   .pipe(debounceTime(60))
   .subscribe(() => dispatch(genericButtonClick()));
 
 fromEvent(resetButton, "click")
   .pipe(debounceTime(60))
-  .subscribe(() => reset());
+  .subscribe(() => dispatch(resetClick()));
